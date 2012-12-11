@@ -4,7 +4,6 @@ LICENSING
 Manifest
 README.md
 Rakefile
-badger-rails.gemspec
 bin/badger
 lib/badger/Capfile
 lib/badger/config/deploy.rb
