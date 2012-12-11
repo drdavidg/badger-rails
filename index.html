@@ -1,0 +1,147 @@
+<!doctype html>
+<!-- The Time Machine GitHub pages theme was designed and developed by Jon Rohan, on Feb 7, 2012. -->
+<!-- Follow him for fun. http://twitter.com/jonrohan. Tail his code on http://github.com/jonrohan -->
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+  <link rel="stylesheet" href="stylesheets/stylesheet.css" media="screen"/>
+  <link rel="stylesheet" href="stylesheets/pygment_trac.css"/>
+  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+  <script type="text/javascript" src="javascripts/script.js"></script>
+
+  <title>Badger-Rails</title>
+  <meta name="description" content="Ruby on Rails deployment automation with Capistrano and Badger.">
+
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+
+</head>
+
+<body>
+
+  <div class="wrapper">
+    <header>
+      <h1 class="title">Badger-Rails</h1>
+    </header>
+    <div id="container">
+      <p class="tagline">Ruby on Rails deployment automation with Capistrano and Badger.</p>
+      <div id="main" role="main">
+        <div class="download-bar">
+        <div class="inner">
+          <a href="https://github.com/curiousminds/badger-rails/tarball/master" class="download-button tar"><span>Download</span></a>
+          <a href="https://github.com/curiousminds/badger-rails/zipball/master" class="download-button zip"><span>Download</span></a>
+          <a href="https://github.com/curiousminds/badger-rails" class="code">View Badger-Rails on GitHub</a>
+        </div>
+        <span class="blc"></span><span class="trc"></span>
+        </div>
+        <article class="markdown-body">
+          <p><img src="https://github.com/curiousminds/badger-rails/raw/master/BadgerGit.png" alt="Logo" title="Logo"></p>
+
+<h1><strong>Badger Rails Gem</strong></h1>
+
+<p>Allows for deployment of Rails 3 project to a CentOS 6+ Red Hat 6+ or Ubuntu Server running Mysql and Nginx.<br>
+Badger Rails deploys to a Cent Os server by Capistrano for ease of use and Bash for speed. Some of the packages it will build are listed below.</p>
+
+<ul>
+<li>automake</li>
+<li>bison</li>
+<li>capistrano-ext</li>
+<li>curl</li>
+<li>gcc-c++</li>
+<li>gcc</li>
+<li>git</li>
+<li>libyaml</li>
+<li>libtool</li>
+<li>libxml2</li>
+<li>libxslt</li>
+<li>logrotate</li>
+<li>make</li>
+<li>mysql</li>
+<li>nginx</li>
+<li>readline</li>
+<li>ruby</li>
+<li>rubygems</li>
+<li>zlib</li>
+</ul><h3><strong>Requirements</strong></h3>
+
+<ul>
+<li>Unix or Linux with ruby 1.8+</li>
+<li>Capistrano</li>
+<li>ssh key</li>
+<li>git</li>
+<li>Rails 3+ Project that works :)</li>
+<li>gem 'mysql2' in Gemfile</li>
+<li>gem 'unicorn' in Gemfile</li>
+<li>CentOS 6+ server Red Hat 6+ server or Ubuntu 10.04, 11.04, 11.10</li>
+</ul><h3><strong>Installation</strong></h3>
+
+<ul>
+<li>gem install badger-rails</li>
+</ul><p>or</p>
+
+<ul>
+<li>Pull down the repo.</li>
+<li>In the project root directory run &lt; gem build badger-rails.gemspec &gt;</li>
+<li>Then run &lt; gem install badger-rails-(gem version).gem &gt;</li>
+</ul><h3><strong>Usage</strong></h3>
+
+<p>In your rails project run the command &lt; badger generate yml &gt; and fill out the config/badger.yml file that is generated.</p>
+
+<ul>
+<li>username: "typically root"</li>
+<li>password: "server password"</li>
+<li>domain: "domain or ip of the server"</li>
+<li>port: "ssh port usually port 22"</li>
+<li>redis: false #true will host redis locally</li>
+<li>environment: "production" # or "staging", development and testing are excluded.</li>
+</ul><p>Run the following commands.<br>
+badger create (name of project)<br>
+git add .<br>
+git commit -m "first badger commit"<br>
+git push badger master<br>
+badger deploy<br></p>
+
+<h3><strong>Further commits</strong></h3>
+
+<p>Additional commits can be made with git. To deploy these new commits push the code using &lt; git push badger master &gt; and &lt; badger deploy &gt;.</p>
+
+<h3>Additional Information</h3>
+
+<p><a href="https://github.com/curiousminds/badger-rails/wiki/Badger-Rails">Badger-Rails</a></p>
+
+<h3>Licensing</h3>
+
+<p>Copyright © 2012 Curious Minds. All rights reserved
+Badger-Rails is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.</p>
+
+<p>Badger-Rails is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See the GNU General Public License (<a href="http://www.gnu.org/licenses/gpl.html">http://www.gnu.org/licenses/gpl.html</a>) for more details.</p>
+
+<p>You should have received a copy of the GNU General Public License (<a href="http://www.gnu.org/licenses/gpl.html">http://www.gnu.org/licenses/gpl.html</a>) along with this program; if not, write to the Free Software Foundation, Inc.,
+59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.</p>
+
+<p>Non-GPL Licenses are available for Commercial Purposes, Please contact licensing(at)curiousminds(dot)com for license details. If you want to use this program for commercial purposes and your code is closed-source, You MUST obtain this license. More License Details can be found in LICENSING file.</p>
+        </article>
+      </div>
+    </div>
+    <footer>
+      <div class="owner">
+      <p><a href="https://github.com/curiousminds" class="avatar"><img src="https://secure.gravatar.com/avatar/eda0f041f8c0a97f6466b3e9a3ac702e?s=30&amp;d=https://a248.e.akamai.net/assets.github.com%2Fimages%2Fgravatars%2Fgravatar-user-420.png" width="48" height="48"/></a> <a href="https://github.com/curiousminds">curiousminds</a> maintains <a href="https://github.com/curiousminds/badger-rails">Badger-Rails</a></p>
+
+
+      </div>
+      <div class="creds">
+        <small>This page generated using <a href="https://pages.github.com/">GitHub Pages</a><br/>theme by <a href="http://twitter.com/jonrohan/">Jon Rohan</a></small>
+      </div>
+    </footer>
+  </div>
+  <div class="current-section">
+    <a href="#top">Scroll to top</a>
+    <a href="https://github.com/curiousminds/badger-rails/tarball/master" class="tar">tar</a><a href="https://github.com/curiousminds/badger-rails/zipball/master" class="zip">zip</a><a href="" class="code">source code</a>
+    <p class="name"></p>
+  </div>
+
+  
+</body>
+</html>
