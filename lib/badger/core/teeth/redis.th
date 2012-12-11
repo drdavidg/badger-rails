@@ -1,0 +1,18 @@
+install_source_redis() {
+  Exists /usr/local/bin/redis-server && return 0
+  groupadd redis
+  useradd redis -g redis
+  cd /usr/local/src
+  wget -q $GFPath/redis-2.2.14.tar.gz
+  tar -xzvf redis-2.2.14.tar.gz
+  rm -rf redis-2.2.14.tar.gz
+  cd redis-*
+  make && make install
+
+  Dir /var/lib/redis
+  UserGroup /var/lib/redis redis
+
+  Sync /etc/badger/core/files/redis/redis-server /etc/init.d/redis-server 744
+  Sync /etc/badger/core/files/redis/redis.conf /etc/redis.conf
+  service redis-server restart && echo 'redis is running :)'
+}

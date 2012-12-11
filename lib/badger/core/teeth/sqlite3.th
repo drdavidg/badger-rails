@@ -1,0 +1,14 @@
+yum_sqlite3() {
+  YumExists sqlite-devel && return 0
+  yum -y install sqlite-devel
+}
+
+apt_sqlite3() {
+  AptExists sqlite3 && return 0
+  apt-get -y install sqlite3
+}
+
+apt_sqlite3-dev() {
+  AptExists libsqlite3-dev && return 0
+  apt-get -y install libsqlite3-dev
+}

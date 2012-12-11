@@ -1,0 +1,9 @@
+yum_gcc-c++() {
+  Exists /usr/bin/c++ && return 0
+  yum -y install gcc-c++
+}
+
+apt_g++() {
+  Exists /usr/bin/c++ && return 0
+  apt-get -y install g++
+}

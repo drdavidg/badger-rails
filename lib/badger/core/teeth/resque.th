@@ -1,0 +1,12 @@
+config_resque() {
+  #mkdir -p $1/script/production
+  #mkdir -p $1/script/staging
+
+  #rsync /etc/badger/core/files/resque/staging/apn_sender $1/script/staging/apn_sender
+  #rsync /etc/badger/core/files/resque/production/apn_sender $1/script/production/apn_sender
+  test -f /opt/tmp/web/config/initializers/resque.rb ||
+  rsync /etc/badger/core/files/resque/resque_web.rb $1/config/resque_web.rb
+
+  test -f /opt/tmp/web/config/initializers/resque.rb && return 0
+  rsync /etc/badger/core/files/resque/resque.rb $1/config/initializers/resque.rb
+}

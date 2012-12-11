@@ -1,0 +1,19 @@
+#!/bin/bash
+resque_yml() {
+cat > $1/config/resque.yml << EOF
+base: &base
+  server: ${dbResque}:6379
+
+development:
+  <<: *base
+
+test:
+  <<: *base
+
+staging:
+  server: ${dbResque}:6379
+
+production:
+  server: ${dbResque}:6379
+EOF
+}

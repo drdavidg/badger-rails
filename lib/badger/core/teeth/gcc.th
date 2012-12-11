@@ -1,0 +1,9 @@
+yum_gcc() {
+  Exists /usr/bin/gcc && return 0
+  yum -y install gcc
+}
+
+apt_gcc() {
+  Exists /usr/bin/gcc && return 0
+  apt-get -y install gcc
+}

@@ -1,0 +1,9 @@
+yum_pcre-devel() {
+  Exists /usr/share/doc/pcre-devel-7.8/pcre.txt pcre-devel && return 0
+  yum -y install pcre-devel
+}
+
+apt_libpcre3-dev() {
+  AptExists libpcre3-dev && return 0
+  apt-get -y install libpcre3 libpcre3-dev
+}

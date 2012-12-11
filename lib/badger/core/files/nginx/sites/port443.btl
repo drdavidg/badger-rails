@@ -1,0 +1,42 @@
+cat >> /etc/badger/core/files/nginx/sites/production-web << EOF
+
+server {
+    listen  443;
+    ssl    on;
+    ssl_certificate    /etc/ssl/${domain}.crt;
+    ssl_certificate_key    /etc/ssl/${domain}.key;
+
+    client_max_body_size 4G;
+    server_name ${domain};
+    access_log /var/log/nginx/nginx.ssl.access.log;
+    error_log /var/log/nginx/nginx.ssl.error.log;
+
+    root /opt/web/current/public;
+    keepalive_timeout 5;
+
+    location / {
+      proxy_set_header X-Forwarded-Proto https;
+      proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+      proxy_set_header Host \$http_host;
+      proxy_redirect off;
+
+      if (!-f \$request_filename) {
+        proxy_pass http://production-web;
+        break;
+      }
+    }
+
+    location ~ ^/assets/ {
+      expires 1y;
+      add_header Cache-Control public;
+      add_header ETag "";
+      break;
+    }
+
+    error_page 500 502 503 504 /500.html;
+    location = /500.html {
+      root /opt/web/current/public;
+    }
+
+}
+EOF

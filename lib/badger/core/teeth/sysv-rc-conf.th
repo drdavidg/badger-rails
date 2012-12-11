@@ -1,0 +1,4 @@
+apt_sysv-rc-conf() {
+  Exists /usr/sbin/sysv-rc-conf && return 0
+  apt-get -y install sysv-rc-conf
+}

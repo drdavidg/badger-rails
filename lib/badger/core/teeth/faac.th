@@ -1,0 +1,11 @@
+install_source_faac() {
+  Exists /usr/lib/libfaac.so libfaac && return 0
+  cd /usr/local/src
+  wget -q $GFPath/faac-1.28.tar.gz
+  tar -xzvf faac-1.28.tar.gz
+  rm -rf faac-1.28.tar.gz
+  cd faac-*
+  /usr/local/src/faac-1.28/bootstrap && ./configure --prefix=/usr --disable-mp4v2
+  make
+  make install
+}

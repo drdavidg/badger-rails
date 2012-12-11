@@ -1,0 +1,37 @@
+gem_capistrano-ext() {
+  GemExists capistrano-ext || return 0
+  gem install capistrano-ext
+}
+
+config_capistrano() {
+  Dir /opt/tmp/web 777
+  Dir /opt/web 744
+  chown badger:badger /opt/web || echo 'user badger web'
+
+  Dir /opt/web/shared 777
+  chown badger:badger /opt/web/shared || echo 'user badger shared'
+
+  Dir /opt/web/shared/log 777
+  chown badger:badger /opt/web/shared/log || echo 'user badger log'
+
+  Dir /opt/web/shared/pids 777
+  chown badger:badger /opt/web/shared/pids || echo 'user badger pids'
+
+  Sync /etc/badger/core/files/cap/Capfile /opt/tmp/web/Capfile
+  Sync /etc/badger/core/files/cap/deploy.rb /opt/tmp/web/config/deploy.rb
+
+  Dir /opt/tmp/web/config/deploy
+  Sync /etc/badger/core/files/cap/deploy/production.rb /opt/tmp/web/config/deploy/production.rb
+  Sync /etc/badger/core/files/cap/deploy/staging.rb /opt/tmp/web/config/deploy/staging.rb
+
+  Sync /etc/badger/core/files/cap/deploy/production-app.rb /opt/tmp/web/config/deploy/production-app.rb
+  Sync /etc/badger/core/files/cap/deploy/staging-app.rb /opt/tmp/web/config/deploy/staging-app.rb
+  cd /opt/tmp/web/
+  if [ -z "$2" ]
+  then
+    cap $1 deploy
+  else
+    cap $1 -s app_domain=$2 deploy
+  fi
+}
+

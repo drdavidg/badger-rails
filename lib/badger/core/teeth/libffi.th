@@ -1,0 +1,4 @@
+apt_libffi-dev() {
+  AptExists libffi-dev && return 0
+  apt-get -y install libffi-dev
+}

@@ -1,0 +1,20 @@
+yum_bison() {
+  YumExists bison && return 0
+  yum -y install bison
+}
+
+yum_bison-devel() {
+  YumExists bison-devel && return 0
+  yum -y install bison-devel
+}
+
+apt_bison() {
+  Exists /usr/bin/bison && return 0
+  apt-get -y install bison
+}
+
+apt_libbison-dev() {
+  AptExists libbison-dev && return 0
+  wget https://github.com/downloads/curiousminds/packages/libbison-dev_2.5.dfsg-2.1_amd64.deb
+  dpkg -i libbison-dev_2.5.dfsg-2.1_amd64.deb
+}

@@ -1,0 +1,4 @@
+gem_bundler() {
+  Exists /opt/rubygems/bin/bundle && return 0
+  gem install bundler
+}

@@ -1,0 +1,52 @@
+install_source_ruby() {
+  Exists /opt/ruby/bin/ruby && return 0
+
+  mkdir -p /opt/ruby/ &&
+  chown badger:badger /opt/ruby/
+
+  mkdir -p /opt/rubygems/ &&
+  chown badger:badger /opt/rubygems/
+
+  cat /root/.bashrc | grep '/opt/ruby/bin:/opt/rubygems/bin' ||
+  echo 'export PATH=/opt/ruby/bin:/opt/rubygems/bin:$PATH' >> /root/.bashrc
+
+  cat /home/badger/.bashrc | grep '/opt/ruby/bin:/opt/rubygems/bin' ||
+  echo 'export PATH=/opt/ruby/bin:/opt/rubygems/bin:$PATH' >> /home/badger/.bashrc
+
+  cat /home/badger/.bashrc | grep 'export GEM_HOME=/opt/rubygems' ||
+  echo 'export GEM_HOME=/opt/rubygems' >> /home/badger/.bashrc
+
+  cat /root/.bashrc | grep 'export GEM_HOME=/opt/rubygems' ||
+  echo 'export GEM_HOME=/opt/rubygems' >> /root/.bashrc
+
+  cd /usr/local/src/
+  #wget -q $GFPath/ruby-1.9.2-p136.tar.gz
+  #tar -xzvf ruby-1.9.2-p136.tar.gz
+  #cd ruby-*
+  wget ftp://ftp.ruby-lang.org/pub/ruby/1.9/ruby-1.9.3-p0.tar.gz
+  tar -xzvf ruby-1.9.3-p0.tar.gz
+  cd ruby-*
+  ./configure --prefix=/opt/ruby/ && make && make install
+
+  #cd /usr/local/src/ruby-*
+  #cd ext/openssl
+  #export PATH=/opt/ruby/bin:/opt/rubygems/bin:$PATH
+  #export GEM_HOME=/opt/rubygems
+  #ruby extconf.rb
+  #make && make install
+
+  source /root/.bashrc
+
+ # cd /opt
+ # wget -q $GFPath/ruby-1.9.2-cent6.tar.gz
+ # tar -xzvf ruby-1.9.2-cent6.tar.gz
+ # chown badger:badger /opt/ruby/
+ # rm -rf ruby-1.9.2-cent6.tar.gz
+
+ # source /root/.bashrc
+}
+
+ruby_packages() {
+  AptExists ruby1.9.1 && return 0
+  apt-get -y install build-essential libopenssl-ruby1.9.1 ruby1.9.1 ruby1.9.1-dev rubygems1.9.1 irb1.9.1 ri1.9.1 rdoc1.9.1
+}

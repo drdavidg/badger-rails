@@ -1,0 +1,11 @@
+install_source_x264() {
+  Exists /usr/bin/x264 && return 0
+  cd /usr/local/src
+  wget -q $GFPath/last_stable_x264.tar.bz2
+  tar -xjvf last_stable_x264.tar.bz2
+  rm -rf last_stable_x264.tar.bz2
+  cd x264-*
+  ./configure --prefix=/usr --enable-shared &&
+  make &&
+  make install
+}

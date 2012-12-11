@@ -1,0 +1,486 @@
+#!/usr/bin/env ruby
+#
+#--------------------------------#
+#--- Author Nathan Kelley -------#
+#--- Company Curiousminds -------#
+#--- Licensing@curiousminds.com -#
+#--------------------------------#
+#
+require 'fileutils'
+require 'rubygems'
+require 'yaml'
+require 'errors'
+require 'core'
+
+@errors = Errors.new
+
+def remove_app(rails_root)
+  spec = Gem::Specification.find_by_name("badger-rails")
+  badger_root = spec.gem_dir + "/lib/"
+  FileUtils.cp(Dir.pwd + "/badger.yml", badger_root + "badger/config/rails-app.yml")
+  Dir.chdir(badger_root + "badger/")
+  while true
+    puts <<EOF
+
+This will remove the #{ARGV[1]} project from the server.
+Do you wish to remove the database as well? [ y/n ]
+
+EOF
+    response = STDIN.gets.chomp
+    if response == "y"
+      exists = `cap #{ARGV[1]} exists`
+      if not exists.chomp == "true"
+        @errors.errors('rails')
+        exit
+      end
+      `cap #{ARGV[1]} removedb`
+      Dir.chdir(rails_root)
+      `git remote rm badger`
+      break
+    elsif response == "n"
+      exists = `cap #{ARGV[1]} exists`
+      if not exists.chomp == "true"
+        @errors.errors('rails')
+        exit
+      end
+      `cap #{ARGV[1]} remove`
+      Dir.chdir(rails_root)
+      `git remote rm badger`
+      break
+    end
+  end
+end
+
+unless ARGV[0].nil?
+  argv=ARGV[0].downcase
+end
+
+if argv.tr('^A-Za-z', '') == "app"
+  if ARGV[1] == "build"
+    core_app = Core.new
+    core_app.ensure_rails_root
+    core_app.ensure_external_db
+    core_app.create(argv)
+    exit
+  elsif ARGV[1] == "scale"
+    if ARGV[2].nil? or ARGV[2].to_i == "0"
+      @errors.errors('scale int')
+      exit
+    else
+      core_scale = Core.new
+      core_scale.ensure_rails_root
+      core_scale.scale ARGV[2], ARGV[0]
+      exit
+    end
+  else
+    if ARGV[1][0].downcase == "s"
+      @errors.errors('scale')
+      exit
+    elsif ARGV[1][0].downcase == "b"
+      @errors.errors('app build')
+      exit
+    else
+      @errors.errors('app usage')
+      exit
+    end
+  end
+end
+
+case argv
+when "info"
+  core_info = Core.new
+  core_info.ensure_rails_root
+  core_info.info
+
+when "create"
+  if ARGV[1].nil?
+    @errors.errors('name')
+  else
+    if ARGV[1] == "db" or ARGV[1][0..2] == "app"
+      @errors.errors('specific name')
+      exit
+    else
+      core_create = Core.new
+      core_create.ensure_rails_root
+      core_create.create
+    end
+  end
+
+when "update"
+  if ARGV[1].nil?
+    @errors.errors('name')
+  else
+    core_update = Core.new
+    core_update.ensure_rails_root
+    core_update.update
+  end
+
+when "db"
+  if not ARGV[1] == "build"
+    @errors.errors('db build')
+  else
+    core_db = Core.new
+    core_db.ensure_rails_root
+    core_db.db
+  end
+
+when "gen", "g", "generate"
+  case ARGV[1].downcase
+  when "ruby-plugin"
+     config_dir = Dir.exists?("config/")
+    if config_dir
+      new_config_dir = Dir.pwd
+      if not File.exists?("lib/badger_plugin.rb")
+        badger_plugin = <<EOF
+module BadgerPluginMethods
+
+  def initialize()
+    #code for pre-rails migration
+  end
+
+end
+
+class BadgerPlugin
+  include BadgerPluginMethods
+end
+EOF
+        `echo '#{badger_plugin}' >> lib/badger_plugin.rb`
+        puts <<EOF
+
+lib/badger_plugin.rb
+
+EOF
+      else
+        @errors.errors('plugins')
+      end
+    else
+      while not Dir.pwd == "/"
+        if Dir.exists?("config/")
+          break
+        else
+          Dir.chdir("..")
+        end
+      end
+      if Dir.pwd == "/"
+        @errors.errors('rails root')
+      else
+        config_dir = Dir.pwd
+        if not File.exists?("lib/badger_plugin.rb")
+          badger_plugin = <<EOF
+module BadgerPluginMethods
+
+  def initialize()
+    #code for pre-rails migration
+  end
+
+end
+
+class BadgerPlugin
+  include BadgerPluginMethods
+end
+EOF
+        `echo '#{badger_plugin}' >> lib/badger_plugin.rb`
+        puts <<EOF
+
+lib/badger_plugin.rb
+
+EOF
+        else
+          @errors.errors('plugins')
+        end
+      end
+    end
+
+  when "plugins"
+    config_dir = Dir.exists?("config/")
+    if config_dir
+      new_config_dir = Dir.pwd
+      if not Dir.exists?("lib/badger/")
+        `mkdir -p lib/badger/teeth/;
+        touch lib/badger/before;
+        touch lib/badger/dev;
+        touch lib/badger/after;
+        touch lib/badger/teeth/fail2ban.th`
+        fail_2ban = <<EOF
+#add_fail2ban() {
+#  fail2ban-client status && return 0
+#  yum -y install fail2ban
+#  fail2ban-client start
+#}
+EOF
+        `echo '#{fail_2ban}' >> lib/badger/teeth/fail2ban.th`
+        `echo '#add_fail2ban' >> lib/badger/after`
+        puts <<EOF
+lib/badger
+lib/badger/teeth/
+lib/badger/after
+lib/badger/before
+lib/badger/dev
+lib/badger/teeth/fail2ban.th
+EOF
+      else
+        @errors.errors('plugins')
+      end
+    else
+      while not Dir.pwd == "/"
+        if Dir.exists?("config/")
+          break
+        else
+          Dir.chdir("..")
+        end
+      end
+      if Dir.pwd == "/"
+        @errors.errors('rails root')
+      else
+        config_dir = Dir.pwd
+        if not Dir.exists?("lib/badger/")
+          `mkdir -p lib/badger/teeth/;
+          touch lib/badger/before;
+          touch lib/badger/dev;
+          touch lib/badger/after;
+          touch lib/badger/teeth/fail2ban.th`
+          fail_2ban = <<EOF
+#add_fail2ban() {
+#  fail2ban-client status && return 0
+#  yum -y install fail2ban
+#  fail2ban-client start
+#}
+EOF
+          `echo '#{fail_2ban}' >> lib/badger/teeth/fail2ban.th`
+          `echo '#add_fail2ban' >> lib/badger/after`
+          puts <<EOF
+lib/badger
+lib/badger/teeth/
+lib/badger/after
+lib/badger/before
+lib/badger/dev
+lib/badger/teeth/fail2ban.th
+EOF
+        else
+          @errors.errors('plugins')
+        end
+      end
+    end
+
+  when "yml"
+     config_dir = Dir.exists?("config/")
+    if config_dir
+      new_config_dir = Dir.pwd
+      if not File.exists?("config/badger.yml")
+        `touch config/badger.yml`
+        badger_yml = <<EOF
+username: "typically root"
+password: "server password"
+domain: "domain or ip of the server"
+port: "ssh port usually port 22"
+redis: false #true will host redis locally
+environment: "production" # or "staging", development and testing are excluded.
+EOF
+        `echo '#{badger_yml}' >> config/badger.yml`
+        puts "config/badger.yml"
+      else
+        @errors.errors('badger yaml')
+      end
+    else
+      while not Dir.pwd == "/"
+        if Dir.exists?("config/")
+          break
+        else
+          Dir.chdir("..")
+        end
+      end
+      if Dir.pwd == "/"
+        @errors.errors('rails root')
+      else
+        config_dir = Dir.pwd
+        if not File.exists?("config/badger.yml")
+          `touch config/badger.yml`
+          badger_yml = <<EOF
+username: "typically root"
+password: "server password"
+domain: "domain or ip of the server"
+port: "ssh port usually port 22"
+redis: false #true will host redis locally
+environment: "production" # or "staging", development and testing are excluded.
+EOF
+          `echo '#{badger_yml}' >> config/badger.yml`
+          puts "config/badger.yml"
+        else
+          @errors.errors('badger yaml')
+        end
+      end
+    end
+  else
+    if ARGV[1][0].downcase == "p"
+      @errors.errors('generate plugins')
+    elsif ARGV[1][0].downcase == "y"
+      @errors.errors('generate yaml')
+    else
+      @errors.errors('generate')
+    end
+  end
+
+when "remove"
+  if ARGV[1].nil?
+    @errors.errors('name')
+  else
+    config_dir = Dir.exists?("config/")
+    if config_dir
+      new_config_dir = Dir.pwd
+      Dir.chdir("config/")
+      remove_app(new_config_dir)
+    else
+      while not Dir.pwd == "/"
+        if Dir.exists?("config/")
+          break
+        else
+          Dir.chdir("..")
+        end
+      end
+      if Dir.pwd == "/"
+        @errors.errors('rails root')
+      else
+        config_dir = Dir.pwd
+        Dir.chdir("config/")
+        remove_app(config_dir)
+      end
+    end
+  end
+
+when "rake"
+  core_rake = Core.new
+  core_rake.ensure_rails_root
+  core_rake.rake_tasks
+
+when "logs"
+  core_logs = Core.new
+  core_logs.ensure_rails_root
+  core_logs.badger_logs
+
+when "gemset"
+  case ARGV[1]
+  when "clear"
+    spec = Gem::Specification.find_by_name("badger-rails")
+    badger_root = spec.gem_dir + "/lib/"
+    Dir.chdir(badger_root + "badger/")
+    while true
+      puts <<EOF
+
+Are you sure you want to remove all gems from the server? [ y/n ]
+
+EOF
+      response = STDIN.gets.chomp
+      if response == "y"
+        `cap rails-app gemset_clear`
+        break
+      elsif response == "n"
+        exit
+      end
+    end
+  else
+    @errors.errors('gemset clear')
+  end
+
+when "help", "-h", "--help"
+  @errors.errors('usage')
+  exit
+
+when "deploy"
+  config_dir = Dir.exists?("config/")
+  if config_dir
+    new_config_dir = Dir.pwd
+    if `cat Gemfile.lock | grep therubyracer` == ""
+      @errors.errors('rubyracer')
+      exit
+    elsif `cat Gemfile.lock | grep mysql2` == ""
+      @errors.errors('mysql2')
+      exit
+    elsif `cat Gemfile.lock | grep unicorn` == ""
+      @errors.errors('unicorn')
+      exit
+    end
+    spec = Gem::Specification.find_by_name("badger-rails")
+    badger_root = spec.gem_dir + "/lib/"
+    if Dir.exists?("lib/badger/") and File.exists?("lib/badger/before") and File.exists?("lib/badger/after") and Dir.exists?("lib/badger/teeth/")
+      `cp -rf lib/badger #{badger_root}badger/core/scripts/badger`
+    else
+      `rm -rf #{badger_root}badger/core/scripts/badger`
+    end
+    Dir.chdir("config/")
+    FileUtils.cp(Dir.pwd + "/badger.yml", badger_root + "badger/config/rails-app.yml")
+    Dir.chdir(badger_root + "badger/")
+    if File.exists?("#{Dir.home}/.ssh/id_rsa.pub")
+      `cap rails-app deploy`
+      unless ARGV[1].nil?
+        if ARGV[1].downcase == "--with-workers"
+          Dir.chdir(new_config_dir)
+          core_app = Core.new
+          core_app.ensure_rails_root
+          core_app.ensure_external_db
+          badger_yml = core_app.yml
+          badger_yml.keys.each do |k|
+            if k.tr('^A-Za-z', '') == "app"
+              core_app.create(k)
+            end
+          end
+          exit
+        end
+      end
+    else
+      @errors.errors('ssh')
+    end
+  else
+    while not Dir.pwd == "/"
+      if Dir.exists?("config/")
+        break
+      else
+        Dir.chdir("..")
+      end
+    end
+    if Dir.pwd == "/"
+      @errors.errors('rails root')
+    else
+      config_dir = Dir.pwd
+      if `cat Gemfile.lock | grep therubyracer` == ""
+        @errors.errors('rubyracer')
+        exit
+      elsif `cat Gemfile.lock | grep mysql2` == ""
+        @errors.errors('mysql2')
+        exit
+      elsif `cat Gemfile.lock | grep unicorn` == ""
+        @errors.errors('unicorn')
+        exit
+      end
+      spec = Gem::Specification.find_by_name("badger-rails")
+      badger_root = spec.gem_dir + "/lib/"
+      if Dir.exists?("lib/badger/")
+        `cp -rf lib/badger #{badger_root}badger/core/scripts/badger`
+      end
+      Dir.chdir("config/")
+      FileUtils.cp(Dir.pwd + "/badger.yml", badger_root + "badger/config/rails-app.yml")
+      Dir.chdir(badger_root + "badger/")
+      if File.exists?("#{Dir.home}/.ssh/id_rsa.pub")
+        `cap rails-app deploy`
+        unless ARGV[1].nil?
+          if ARGV[1].downcase == "--with-workers"
+            Dir.chdir(config_dir)
+            core_app = Core.new
+            core_app.ensure_rails_root
+            core_app.ensure_external_db
+            badger_yml = core_app.yml
+            badger_yml.keys.each do |k|
+              if k.tr('^A-Za-z', '') == "app"
+                core_app.create(k)
+              end
+            end
+            exit
+          end
+        end
+      else
+        @errors.errors('ssh')
+      end
+    end
+  end
+else
+  @errors.errors('usage')
+end

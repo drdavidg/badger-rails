@@ -1,0 +1,14 @@
+before() {
+  Exists /etc/badger/core/scripts/badger/before || return 0
+  source /etc/badger/core/scripts/badger/before
+}
+
+after() {
+  Exists /etc/badger/core/scripts/badger/after || return 0
+  source /etc/badger/core/scripts/badger/after
+}
+
+dev() {
+  Exists /etc/badger/core/scripts/badger/dev || return 0
+  source /etc/badger/core/scripts/badger/dev
+}

@@ -1,0 +1,40 @@
+#!/bin/bash
+
+tmpIP=$(ifconfig | sed -rn 's/.*r:([^ ]+) .*/\1/p')
+declare -a CentOsIPs=($tmpIP)
+UPTIME=$( uptime )
+
+function get_hd_usage() {
+  DFYO=(`df -Pm | sed -e 1d | head -3 | sed -n 1p`)
+  let total_space=1000*${DFYO[2]}/${DFYO[1]}
+  let df_units=total_space/10
+  let df_decimal=total_space%10
+  echo $df_units.$df_decimal
+}
+function git_link() {
+  repo=$( cd /opt/git/ && ls | grep .git )
+  echo "git@${CentOsIPs[0]}:/opt/git/$repo"
+}
+function IPS() {
+  tmpIP=$(ifconfig | sed -rn 's/.*r:([^ ]+) .*/\1/p')
+  declare -a CentOsIPs=($tmpIP)
+}
+function project_name() {
+  repo=$( cd /opt/git/ && ls | grep .git )
+  name=${repo//${CentOsIPs[0]}/}
+  project=${name//.git/}
+  echo $project
+}
+echo
+echo "Name: $( project_name )"
+echo "External IP: ${CentOsIPs[0]}"
+echo "Internal IP: ${CentOsIPs[1]}"
+echo "Uptime: ${UPTIME}"
+echo "Disk Usage: %$(get_hd_usage)"
+echo "Git Repo: $(git_link)"
+echo "Rails Project: /opt/web/current"
+echo "Rails Logs: /opt/web/current/log"
+echo "Nginx Logs: /var/log/nginx"
+echo "Mysql Logs: /var/log/mysql"
+echo "Mysql Info: /root/.my.cnf"
+echo

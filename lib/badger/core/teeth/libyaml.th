@@ -1,0 +1,19 @@
+apt_libyaml() {
+  AptExists libyaml-0-2 && return 0
+  apt-get -y install libyaml-0-2
+}
+
+apt_libyaml-dev() {
+  AptExists libyaml-dev && return 0
+  apt-get -y install libyaml-dev
+}
+
+yum_libyaml() {
+  YumExists libyaml && return 0
+  yum -y install libyaml
+}
+
+yum_libyaml-devel() {
+  YumExists libyaml-devel && return 0
+  yum -y install libyaml-devel
+}

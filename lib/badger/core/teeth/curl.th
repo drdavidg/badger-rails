@@ -1,0 +1,24 @@
+yum_curl() {
+  YumExists libcurl && return 0
+  yum -y install libcurl
+}
+
+yum_curl-devel() {
+  YumExists libcurl-devel && return 0
+  yum -y install libcurl-devel
+}
+
+apt_curl() {
+  Exists /usr/bin/curl && return 0
+  apt-get -y install curl
+}
+
+apt_curl_openssl-dev() {
+  AptExists libcurl4-openssl-dev && return 0
+  apt-get -y install libcurl4-openssl-dev
+}
+
+apt_curl_gnutls-dev() {
+  AptExists libcurl4-gnutls-dev && return 0
+  apt-get -y install libcurl4-gnutls-dev
+}

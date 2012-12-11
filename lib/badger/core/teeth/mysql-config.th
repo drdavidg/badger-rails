@@ -1,0 +1,40 @@
+config_mysql-privileges-rails() {
+  [ "$(cat /etc/issue | egrep '(CentOS)|(Red\ Hat)')" ] && Status mysqld
+  [ "$(cat /etc/issue | egrep '(Ubuntu)|(Debian)')" ] && Status mysql
+
+  Exists /root/.my.cnf config-privileges && return 0
+  rootPassword=$(pwgen 16 1)
+
+  [ "$(cat /etc/issue | egrep '(CentOS)|(Red\ Hat)')" ] && Service mysqld
+  [ "$(cat /etc/issue | egrep '(Ubuntu)|(Debian)')" ] && Service mysql
+
+  mysql -u root -e "DELETE FROM mysql.user WHERE User='';"
+  mysql -u root -e "DROP DATABASE test; DELETE FROM mysql.db WHERE Db='test' OR Db='test\\_%';"
+  mysql -u root -e "UPDATE mysql.user SET Password=PASSWORD('$rootPassword') WHERE User='root'; FLUSH PRIVILEGES;"
+
+  Sync /etc/badger/core/files/mysql/my.cnf /root/.my.cnf 600
+  sed -i "s/root_password/$rootPassword/g" /root/.my.cnf
+}
+
+config_mysql-badger() {
+  if [ -f /root/.badger.conf ]
+  then
+    localPassword=$(cat /root/.badger.conf)
+    Sync /etc/badger/core/files/mysql/database.yml.bk /etc/badger/core/files/mysql/database.yml
+    sed -i "s/password: example/password: $localPassword/g" /etc/badger/core/files/mysql/database.yml
+  fi
+  Exists /root/.badger.conf badger-privileges && return 0
+  localPassword=$(pwgen 6 1)
+  touch /root/.badger.conf
+  echo $localPassword > /root/.badger.conf
+  Mysql badger-staging badger localhost $localPassword
+  Mysql badger-production badger localhost $localPassword
+  Sync /etc/badger/core/files/mysql/database.yml.bk /etc/badger/core/files/mysql/database.yml
+  sed -i "s/password: example/password: $localPassword/g" /etc/badger/core/files/mysql/database.yml
+}
+
+config_mysql-external() {
+  path='/etc/badger/core/files/mysql/db_stats'
+  Mysql $(sed -n '3p' < $path) $(sed -n '1p' < $path) $(sed -n '7p' < $path) $(sed -n '2p' < $path)
+  Mysql $(sed -n '6p' < $path) $(sed -n '4p' < $path) $(sed -n '7p' < $path) $(sed -n '5p' < $path)
+}

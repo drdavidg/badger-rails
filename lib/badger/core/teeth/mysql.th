@@ -1,0 +1,14 @@
+yum_mysql() {
+  Exists /usr/bin/mysql && return 0
+  yum -y install mysql
+}
+
+yum_mysql-devel() {
+  YumExists mysql-devel && return 0
+  yum -y install mysql-devel
+}
+
+apt_libmysqlclient-dev() {
+  AptExists libmysqlclient-dev && return 0
+  apt -y install libmysqlclient-dev
+}

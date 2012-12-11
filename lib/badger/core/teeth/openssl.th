@@ -1,0 +1,19 @@
+yum_openssl() {
+  Exists /usr/bin/openssl && return 0
+  yum -y install openssl
+}
+
+yum_openssl-devel() {
+  YumExists openssl-devel && return 0
+  yum -y install openssl-devel
+}
+
+apt_openssl() {
+  Exists /usr/bin/openssl && return 0
+  apt-get -y install openssl
+}
+
+apt_libssl-dev() {
+  AptExists libssl-dev && return 0
+  apt-get -y install libssl-dev
+}

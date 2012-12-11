@@ -1,0 +1,11 @@
+install_source_yasm() {
+  Exists /usr/bin/yasm && return 0
+  cd /usr/local/src
+  wget -q $GFPath/yasm-1.1.0.tar.gz
+  tar -xzvf yasm-1.1.0.tar.gz
+  rm -rf yasm-1.1.0.tar.gz
+  cd yasm-*
+  ./configure --prefix=/usr &&
+  make &&
+  make install
+}

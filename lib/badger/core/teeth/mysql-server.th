@@ -1,0 +1,16 @@
+yum_mysql-server() {
+  Exists /etc/init.d/mysqld mysql-server && return 0
+  yum -y install mysql-server
+}
+
+apt_mysql-server() {
+  Exists /usr/bin/mysql && return 0
+  export DEBIAN_FRONTEND=noninteractive
+  apt-get -y install mysql-server
+  sed -i "s/.*bind-address.*/#bind-address/g" /etc/mysql/my.cnf
+}
+
+apt_libmysqlclient() {
+  dpkg-query -W libmysqlclient-dev | grep ubuntu && return 0
+  apt-get -y install libmysqlclient-dev
+}

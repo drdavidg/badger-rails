@@ -1,0 +1,9 @@
+install_source_lame() {
+  Exists /usr/bin/lame && return 0
+  cd /usr/local/src/
+  wget -q http://downloads.sourceforge.net/lame/lame-3.98.4.tar.gz
+  tar -xzvf lame-3.98.4.tar.gz
+  rm -rf lame-3.98.4.tar.gz
+  cd lame-*
+  ./configure --prefix=/usr/ && make && make install
+}

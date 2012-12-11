@@ -1,0 +1,2 @@
+#!/bin/bash
+gem list | cut -d " " -f1 | egrep -v '(bundler|god)' | xargs gem uninstall -aIx

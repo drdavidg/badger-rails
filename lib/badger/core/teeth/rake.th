@@ -1,0 +1,12 @@
+gem_rake() {
+  Exists /opt/rubygems/bin/rake && return 0
+
+  tempArray=$(cat /opt/tmp/web/Gemfile.lock | grep rake | tr -d '[A-Za-z()><=].')
+  declare -a array=($tempArray)
+  a=$(echo "${array[*]}" | sort -nr | head -n1)
+  rakeVersion=$(IndexOf $a ${array[@]})
+  tempArray=$(cat /opt/tmp/web/Gemfile.lock | grep rake | tr -d '[A-Za-z()><=]')
+  declare -a array=($tempArray)
+
+  gem install rake -v "${array[$rakeVersion]}"
+}

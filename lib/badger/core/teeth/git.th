@@ -1,0 +1,23 @@
+yum_git() {
+  Exists /usr/bin/git && return 0
+  yum -y install git
+}
+
+apt_git() {
+  Exists /usr/bin/git && return 0
+  apt-get -y install git-core
+}
+
+git_clone() {
+  Exists /opt/tmp/web/Capfile repo && return 0
+  git clone $(sed -n 1p /etc/badger/core/files/git/git) /opt/tmp/web
+}
+
+git_repo() {
+  Exists /opt/tmp/web/Capfile repo && return 0
+  cd /root
+  rsync --rsh="sshpass -p $(sed -n 1p /etc/badger/core/files/ssh/app) ssh -o StrictHostKeyChecking=no -l root" .ssh/id_rsa.pub $(sed -n 2p /etc/badger/core/files/ssh/app):/home/git/.ssh/app
+  sshpass -p $(sed -n 1p /etc/badger/core/files/ssh/app) ssh -o StrictHostKeyChecking=no root@$(sed -n 2p /etc/badger/core/files/ssh/app) 'cat /home/git/.ssh/authorized_keys | grep "$(cat /home/git/.ssh/app)" || echo $(cat /home/git/.ssh/app) >> /home/git/.ssh/authorized_keys'
+  repo=$(sshpass -p $(sed -n 1p /etc/badger/core/files/ssh/app) ssh root@$(sed -n 2p /etc/badger/core/files/ssh/app) 'sed -n 1p /etc/badger/core/files/git/git')
+  git clone $repo /opt/tmp/web
+}

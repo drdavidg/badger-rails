@@ -1,0 +1,4 @@
+apt_chkconfig() {
+  Exists /sbin/chkconfig && return 0
+  apt-get -y install chkconfig
+}

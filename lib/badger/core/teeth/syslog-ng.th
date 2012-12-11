@@ -1,0 +1,16 @@
+yum_syslog-ng() {
+  Status syslog-ng
+  Exists /etc/syslog-ng/lock syslog-ng && return 0
+  yum -y update rsyslog
+  yum -y remove syslog-ng
+  rm -rf /etc/syslog-ng/*
+  yum -y install syslog-ng
+  touch /etc/syslog-ng/lock
+  Service syslog-ng
+}
+
+apt_syslog-ng() {
+  Exists /usr/sbin/syslog-ng && return 0
+  apt-get -y install syslog-ng
+  Service syslog-ng
+}

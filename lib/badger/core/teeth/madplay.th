@@ -1,0 +1,10 @@
+install_source_madplay() {
+  Exists /usr/bin/madplay && return 0
+  cd /usr/local/src
+  wget -q $GFPath/madplay-0.15.2b.tar.gz
+  tar -xzvf madplay-0.15.2b.tar.gz
+  rm -rf madplay-0.15.2b.tar.gz
+  cd madplay-*
+  ./configure --prefix=/usr &&
+  make && make install
+}

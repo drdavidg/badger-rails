@@ -1,0 +1,10 @@
+install_source_libid3tag() {
+  Exists /usr/lib/libid3tag.so libid3tag && return 0
+  cd /usr/local/src
+  wget -q $GFPath/libid3tag-0.15.1b.tar.gz
+  tar -xzvf libid3tag-0.15.1b.tar.gz
+  rm -rf libid3tag-0.15.1b.tar.gz
+  cd libid3tag-*
+  ./configure --prefix=/usr &&
+  make && make install
+}

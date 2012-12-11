@@ -1,0 +1,11 @@
+yum_postfix() {
+  Status postfix
+  Exists /usr/sbin/postfix && return 0
+  yum -y install postfix
+}
+
+apt_postfix() {
+  Status postfix
+  Exists /usr/sbin/postfix && return 0
+  apt-get -y install postfix
+}

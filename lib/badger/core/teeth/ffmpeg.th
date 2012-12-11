@@ -1,0 +1,28 @@
+install_source_ffmpeg() {
+  Exists /usr/local/bin/ffmpeg && return 0
+  cd /usr/local/src
+  wget -q $GFPath/ffmpeg-0.8.3.tar.gz
+  tar -xzvf ffmpeg-0.8.3.tar.gz
+  rm -rf ffmpeg-0.8.3.tar.gz
+  cd ffmpeg-*
+  ./configure --enable-libspeex --enable-gpl --enable-postproc --enable-nonfree --enable-postproc --enable-avfilter --enable-pthreads --enable-libxvid --enable-libx264 --enable-libmp3lame --enable-libfaac --disable-ffserver --disable-ffplay &&
+  make && make install &&
+  cat /etc/ld.so.conf | grep /usr/lib || echo /usr/lib >> /etc/ld.so.conf
+  /sbin/ldconfig
+}
+
+install_media_group() {
+  install_source_yasm
+  install_source_x264
+  install_source_lame
+  install_source_libmad
+  install_source_libid3tag
+  install_source_madplay
+  install_source_sox
+  install_source_faac
+  install_source_xvid
+  install_libogg
+  install_libogg-devel
+  install_source_libspeex
+  install_source_ffmpeg
+}

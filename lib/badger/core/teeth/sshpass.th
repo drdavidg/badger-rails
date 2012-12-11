@@ -1,0 +1,9 @@
+yum_sshpass() {
+  Exists /usr/bin/sshpass && return 0
+  yum -y install sshpass
+}
+
+apt_sshpass() {
+  Exists /usr/bin/sshpass && return 0
+  apt-get -y install sshpass
+}

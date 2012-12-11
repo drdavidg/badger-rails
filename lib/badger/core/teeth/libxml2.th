@@ -1,0 +1,19 @@
+yum_libxml2() {
+  YumExists libxml2 && return 0
+  yum -y install libxml2
+}
+
+yum_libxml2-devel() {
+  YumExists libxml2-devel && return 0
+  yum -y install libxml2-devel
+}
+
+apt_libxml2() {
+  AptExists libxml2 && return 0
+  apt-get -y install libxml2
+}
+
+apt_libxml2-dev() {
+  AptExists libxml2-dev && return 0
+  apt-get -y install libxml2-dev
+}

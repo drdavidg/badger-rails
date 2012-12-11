@@ -1,0 +1,15 @@
+yum_ntpd() {
+  Service ntpd || echo "Installing ntp"
+  Exists /usr/sbin/ntpd && return 0
+  yum -y install ntp
+  ntpdate pool.ntp.org
+  Service ntpd
+}
+
+apt_ntp() {
+  Service ntp || echo "Installing ntp"
+  Exists /etc/init.d/ntp && return 0
+  apt-get -y install ntp
+  ntpdate pool.ntp.org
+  Service ntp
+}

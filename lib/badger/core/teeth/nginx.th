@@ -1,0 +1,56 @@
+install_source_nginx() {
+  Exists /usr/sbin/nginx && return 0
+  cd /usr/local/src/
+  wget -q $GFPath/nginx-0.8.54.tar.gz
+  tar -xzvf nginx-0.8.54.tar.gz
+  rm -rf nginx-0.8.54.tar.gz
+  cd nginx-*
+  ./configure --prefix=/usr/share/nginx --sbin-path=/usr/local/sbin --with-http_ssl_module --conf-path=/etc/nginx/nginx.conf --with-http_gzip_static_module --group=nginx --user=nginx --sbin-path=/usr/sbin/nginx --pid-path=/var/run/nginx.pid --with-http_stub_status_module &&
+  make && make install
+}
+
+apt_nginx() {
+  AptExists nginx && return 0
+  apt-get -y install nginx
+}
+
+config_nginx() {
+  [ "$(cat /etc/issue | egrep '(CentOS)|(Red\ Hat)')" ] && Sync /etc/badger/core/files/nginx/nginx /etc/init.d/nginx 700
+  Dir /etc/nginx/sites-available/ 644
+  Dir /etc/nginx/sites-enabled/ 644
+  Dir /etc/ssl/ 644
+  Dir /var/log/nginx/ 644
+  Sync /etc/badger/core/files/nginx/nginx.conf /etc/nginx/nginx.conf 644
+  chkconfig nginx on
+  Service nginx
+}
+
+nginx_add_site() {
+  if [ ! -z `cat /opt/tmp/web/config/badger.yml | grep certification: | grep true` ]
+  then
+    if [ $1 == 'production-web' ]
+    then
+      [ "$(ls -A /opt/tmp/web/config/certs)" ] && echo "ssl" || return 0
+      cd /opt/web/current/config/certs/
+
+      cert=$( ls | grep .crt )
+      domain=${cert//.crt/}
+      key=$( ls | grep .key )
+      signing=$( ls | grep .csr )
+
+      location=/etc/badger/core/files/nginx/sites
+
+      Template $location/port80.btl
+      Template $location/port443.btl
+
+      Sync /opt/web/current/config/certs/$cert /etc/ssl/$cert
+      Sync /opt/web/current/config/certs/$key /etc/ssl/$key
+      Sync /opt/web/current/config/certs/$signing /etc/ssl/$signing
+    fi
+  fi
+
+  Sync /etc/badger/core/files/nginx/sites/$1 /etc/nginx/sites-available/$1 744
+  test -f /etc/nginx/sites-available/default && rm -rf /etc/nginx/sites-available/default
+  test -h /etc/nginx/sites-enabled/$1 || ln -s /etc/nginx/sites-available/$1 /etc/nginx/sites-enabled/$1
+  Service nginx
+}

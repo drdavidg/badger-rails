@@ -1,0 +1,9 @@
+yum_zlib() {
+  YumExists zlib && return 0
+  yum -y install zlib
+}
+
+yum_zlib-devel() {
+  YumExists zlib-devel && return 0
+  yum -y install zlib-devel
+}

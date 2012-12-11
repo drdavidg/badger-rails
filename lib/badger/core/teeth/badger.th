@@ -1,0 +1,27 @@
+config_badger() {
+  Exists /home/badger/.bashrc badger && return 0
+  groupadd badger
+  useradd -m badger -g badger
+
+  echo 'gem: --no-ri --no-rdoc' > /home/badger/.gemrc
+  echo 'gem: --no-ri --no-rdoc' > /root/.gemrc
+  echo 'badger ALL=(ALL) NOPASSWD: ALL' > /etc/sudoers
+  echo 'Defaults env_keep="GEM_HOME"' >> /etc/sudoers
+  echo 'Defaults env_reset' >> /etc/sudoers
+
+  Dir /home/badger/ 700
+  echo 'badger added'
+
+  Dir /home/badger/.ssh 700
+  chown badger:badger /home/badger/.ssh
+
+  badger_pub_key=$(cat /root/.ssh/id_rsa.pub)
+  Sync /root/.ssh/id_rsa /home/badger/.ssh/id_rsa 700
+  chown badger:badger /home/badger/.ssh/id_rsa
+
+  Sync /root/.ssh/id_rsa.pub /home/badger/.ssh/id_rsa.pub 700
+  chown badger:badger /home/badger/.ssh/id_rsa.pub
+
+  echo $badger_pub_key >> /home/git/.ssh/authorized_keys
+  echo $badger_pub_key >> /home/badger/.ssh/authorized_keys
+}

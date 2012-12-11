@@ -1,0 +1,174 @@
+for tooth in `cd /etc/badger/core/teeth/ && ls`
+do
+  source /etc/badger/core/teeth/$tooth
+done
+
+if [ -d "/etc/badger/core/scripts/badger/teeth/" ]
+then
+  for tooth in `cd /etc/badger/core/scripts/badger/teeth/ && ls`
+  do
+    source /etc/badger/core/scripts/badger/teeth/$tooth
+  done
+fi
+
+GFPath=https://github.com/downloads/curiousminds/packages
+
+tmpIP=$(ifconfig | sed -rn 's/.*r:([^ ]+) .*/\1/p')
+declare -a CentOsIPs=($tmpIP)
+
+Async() {
+  $* 1>&1 &
+}
+
+Install() {
+  yum -y install $* || apt-get install $*
+}
+
+Sync() {
+  echo $1 $2
+  rsync $1 $2
+  if [ -n "$3" ]
+  then
+    chmod $3 $2
+  fi
+}
+
+Service() {
+  Status=$(service $1 status | grep stopped)
+  if [ -z "$Status" ]
+  then
+    service $1 restart
+    echo "$1 is running :)"
+  else
+    service $1 start
+  fi
+}
+
+Status() {
+  service $1 status && return 0
+  service $1 restart
+}
+
+Dir() {
+  mkdir -p $1
+  if [ -n "$2" ]
+  then
+    chmod $2 $1
+  fi
+}
+
+Exists() {
+  if [ -f $1 ]
+  then
+    if [ -z $2 ]
+    then
+      n=$(echo $1 | tr "/" "\n")
+      name=(echo $n)
+      c=${#name[@]}
+      let c--
+      file_name=`echo "${name[c]}"`
+      echo $file_name installed
+      return 0
+    else
+      echo $2 installed
+      return 0
+    fi
+  else
+    return 1
+  fi
+}
+
+AptExists() {
+  if dpkg-query -W $1
+  then
+    return 0
+  else
+    return 1
+  fi
+}
+
+YumExists() {
+  yummy=$(rpm -qa | grep $1)
+  if [ -z "$yummy" ]
+  then
+    return 1
+  else
+    return 0
+  fi
+}
+
+GemExists() {
+  gemList=$(gem list | grep $1)
+  if [ -z "$gemList" ]
+  then
+    return 0
+  else
+    echo $1 Installed
+    return 1
+  fi
+}
+
+Nil() {
+  if [ -z $1 ]
+  then
+    return 1
+  else
+    return 0
+  fi
+}
+
+CentOsRelease() {
+  REL=(`cat /etc/*-release | sed 's/[^0-9]*//g'`)
+  if [ $REL -gt 60 ]
+  then
+    return 0
+  else
+    return 1
+  fi
+}
+
+IsCentOs() {
+  cat /etc/*-release | grep CentOS -m 1
+}
+
+GemVersion() {
+  if [ `gem --version` == $1 ]
+  then
+    return 1
+  else
+    return 0
+  fi
+}
+
+XenKernel() {
+  uname -a | egrep -c '(rscloud)|(xen)'
+}
+
+UserGroup() {
+  chown $2 $1
+  if [ -z $3 ]
+  then
+    chgrp $2 $1
+  else
+    chgrp $3 $1
+  fi
+}
+
+Mysql() {
+  mysql -e "SHOW DATABASES;" | grep -x $1 || mysql -e "CREATE DATABASE \`$1\`;"
+  mysql -e "SELECT * FROM mysql.db WHERE User='$2' AND Db='$1' AND Host='$3'" | grep $2 ||
+  mysql -e "GRANT ALL PRIVILEGES ON \`$1\`.* TO '$2'@'$3' IDENTIFIED BY '$4' WITH GRANT OPTION;"
+}
+
+Template() {
+  source $1
+}
+
+IndexOf() {
+  local i=1 S=$2; shift
+  while [ $S != $1 ]
+  do    ((i++)); shift
+    [ -z "$1" ] && { i=0; break; }
+    done
+    echo $i
+}

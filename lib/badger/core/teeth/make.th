@@ -1,0 +1,9 @@
+yum_make() {
+  Exists /usr/bin/make && return 0
+  yum -y install make
+}
+
+apt_make() {
+  Exists /usr/bin/make && return 0
+  apt-get -y install make
+}

@@ -1,0 +1,125 @@
+#!/bin/bash
+source /etc/badger/core/functions
+before
+if [ "$(cat /etc/issue | egrep '(CentOS)|(Red\ Hat)')" ]
+then
+  yum_gcc
+  yum_make
+  yum_gcc-c++
+  yum_automake
+  yum_libtool
+  yum_logrotate
+  yum_syslog-ng
+  yum_openssl
+  yum_openssl-devel
+  ssh_badger
+  yum_sudo
+  yum_curl
+  yum_curl-devel
+  yum_ntpd
+  dev
+  config_badger
+  yum_postfix
+  yum_bison
+  yum_bison-devel
+  yum_readline
+  yum_readline-devel
+  yum_zlib
+  yum_zlib-devel
+  yum_libxml2
+  yum_libxml2-devel
+  yum_libxslt
+  yum_libxslt-devel
+  yum_sqlite3
+  yum_mysql
+  yum_mysql-devel
+  yum_libyaml
+  yum_libyaml-devel
+  install_source_ruby
+  install_source_rubygems 1.8.21 badger badger && echo 'RubyGems Installed'
+  echo 'Gems take forever......'
+  gem_san_juan
+  gem_capistrano-ext
+  gem_god
+  git_clone
+  gem_rake
+  gem_bundler
+  yum_pwgen
+  yum_mysql-server
+  config_mysql-privileges-rails
+  config_mysql-badger
+  yum_pcre-devel
+  config_god
+  #install_source_redis
+  config_capistrano staging
+  install_source_nginx
+  config_nginx
+  nginx_add_site staging-web
+  rm -rf /etc/badger/core/files/mysql/database.yml
+  firewall web
+elif [ "$(cat /etc/issue | egrep '(Ubuntu)|(Debian)')" ]
+then
+  apt_gcc
+  apt_make
+  apt_g++
+  apt_automake
+  apt_libtool
+  apt_logrotate
+  apt_sysv-rc-conf
+  apt_syslog-ng
+  apt_openssl
+  apt_libssl-dev
+  ssh_badger
+  apt_sudo
+  apt_curl
+  apt_curl_openssl-dev
+  apt_curl_gnutls-dev
+  apt_ntp
+  apt_chkconfig
+  dev
+  config_badger
+  apt_postfix
+  apt_bison
+  apt_libbison-dev
+  apt_libreadline6
+  apt_libreadline6-dev
+  apt_libxml2
+  apt_libxml2-dev
+  apt_libxslt
+  apt_libxslt-dev
+  apt_sqlite3
+  apt_sqlite3-dev
+  apt_mysql-server
+  apt_libmysqlclient && echo 'Libmysqlclient Installed'
+  apt_libyaml
+  apt_libyaml-dev
+  apt_libffi-dev
+  install_source_ruby
+  install_source_rubygems 1.8.21 badger badger && echo 'RubyGems Installed'
+  echo 'Gems take forever......'
+  source /root/.bashrc
+  source /root/.profile
+  gem_rake
+  gem_san_juan
+  gem_capistrano-ext
+  gem_god
+  apt_git
+  git_clone
+  gem_bundler
+  apt_pwgen
+  config_mysql-privileges-rails
+  config_mysql-badger
+  apt_libpcre3-dev
+  config_god
+  #install_source_redis
+  config_capistrano staging
+  apt_nginx
+  config_nginx
+  nginx_add_site staging-web
+  rm -rf /etc/badger/core/files/mysql/database.yml
+  firewall web
+else
+  echo "ERROR: Incompatible Operating System."
+  exit 64
+fi
+after

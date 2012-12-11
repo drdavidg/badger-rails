@@ -1,0 +1,19 @@
+yum_logrotate() {
+  Exists /usr/sbin/logrotate && return 0
+  yum -y install logrotate
+  Dir /var/log/archive 750
+
+  Sync /etc/badger/core/files/logrotate/logrotate.conf /etc/logrotate.conf 755
+
+  Sync /etc/badger/core/files/logrotate/logrotate.cron /etc/cron.daily/logrotate 755
+}
+
+apt_logrotate() {
+  Exists /usr/sbin/logrotate && return 0
+  yum -y install logrotate
+  Dir /var/log/archive 750
+
+  Sync /etc/badger/core/files/logrotate/logrotate.conf /etc/logrotate.conf 755
+
+  Sync /etc/badger/core/files/logrotate/logrotate.cron /etc/cron.daily/logrotate 755
+}

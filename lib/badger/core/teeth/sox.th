@@ -1,0 +1,12 @@
+install_source_sox() {
+  Exists /usr/bin/sox && return 0
+  cd /usr/local/src
+  wget -q http://downloads.sourceforge.net/sox/sox-14.3.1.tar.gz
+  tar -xzvf sox-14.3.1.tar.gz
+  rm -rf sox-14.3.1.tar.gz
+  cd sox-*
+  ./configure --prefix=/usr &&
+  make && make install
+  cat /etc/ld.so.conf | grep /usr/lib || echo /usr/lib >> /etc/ld.so.conf
+  /sbin/ldconfig
+}

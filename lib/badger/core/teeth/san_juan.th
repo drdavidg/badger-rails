@@ -1,0 +1,4 @@
+gem_san_juan() {
+  gem list | grep san_juan && return 0
+  gem install san_juan
+}

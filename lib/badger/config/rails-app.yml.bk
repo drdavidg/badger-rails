@@ -1,0 +1,6 @@
+username: "typically root"
+password: "server password"
+domain: "domain or ip of the server"
+port: "ssh port usually port 22"
+redis: false #true will host redis locally
+environment: "production" # or "staging", development and testing are excluded.

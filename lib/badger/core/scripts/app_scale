@@ -1,0 +1,15 @@
+#!/bin/bash
+service god restart
+killall -u badger -s QUIT
+sed -i "s/.*num_of_workers =.*/num_of_workers = $1/g" /etc/badger/core/files/god/angel/resque-stg.god
+sed -i "s/.*num_of_workers =.*/num_of_workers = $1/g" /etc/badger/core/files/god/angel/resque.god
+
+rsync /etc/badger/core/files/god/angel/resque-stg.god /home/badger/resque-stg.god
+rsync /etc/badger/core/files/god/angel/resque-stg.god /home/badger/resque.god
+sleep 1
+if [ $2 == "staging" ]
+then
+  su badger -c 'export PATH=/opt/ruby/bin:/opt/rubygems/bin:$PATH; export GEM_HOME=/opt/rubygems; sudo /opt/rubygems/bin/god load /etc/badger/core/files/god/angel/resque-stg.god'
+else
+  su badger -c 'export PATH=/opt/ruby/bin:/opt/rubygems/bin:$PATH; export GEM_HOME=/opt/rubygems; sudo /opt/rubygems/bin/god load /etc/badger/core/files/god/angel/resque.god'
+fi

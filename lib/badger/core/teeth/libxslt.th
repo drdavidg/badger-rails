@@ -1,0 +1,19 @@
+yum_libxslt() {
+  YumExists libxslt && return 0
+  yum -y install libxslt
+}
+
+yum_libxslt-devel() {
+  YumExists libxslt-devel && return 0
+  yum -y install libxslt-devel
+}
+
+apt_libxslt() {
+  AptExists libxslt1.1 && return 0
+  apt-get -y install libxslt1.1
+}
+
+apt_libxslt-dev() {
+  AptExists libxslt1-dev && return 0
+  apt-get -y install libxslt1-dev
+}

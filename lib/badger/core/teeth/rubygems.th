@@ -1,0 +1,17 @@
+install_source_rubygems() {
+  test -d /opt/rubygems/ && chown -R $2:$2 /opt/rubygems/
+  #GemVersion returns 1 or true if gem --version equals the first arg
+  export PATH=/opt/ruby/bin:/opt/rubygems/bin:$PATH
+  export GEM_HOME=/opt/rubygems
+  GemVersion $1 || return 0
+  rm -rf /opt/ruby/bin/gem
+  touch /root/.gemrc
+  echo 'gem: --no-ri --no-rdoc' > /root/.gemrc
+  cd /usr/local/src/
+  wget -q http://production.cf.rubygems.org/rubygems/rubygems-$1.tgz
+  tar -xzvf rubygems-$1.tgz
+  rm -rf rubygems-$1.tgz
+  cd rubygems-*
+  source /root/.bashrc
+  ruby setup.rb
+}

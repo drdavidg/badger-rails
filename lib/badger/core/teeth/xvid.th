@@ -1,0 +1,11 @@
+install_source_xvid() {
+  Exists /usr/lib/libxvidcore.a xvid && return 0
+  cd /usr/local/src
+  wget -q $GFPath/xvidcore-1.3.2.tar.gz
+  tar -xzvf xvidcore-1.3.2.tar.gz
+  rm -rf xvidcore-1.3.2.tar.gz
+  cd xvidcore/build/generic/
+  ./configure --prefix=/usr &&
+  make &&
+  make install
+}

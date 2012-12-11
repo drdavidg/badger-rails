@@ -1,0 +1,17 @@
+gem_god() {
+  Exists /opt/rubygems/bin/god && return 0
+  gem install god
+}
+
+config_god() {
+  workers=$[$(cat /proc/cpuinfo | grep processor | tail -1 | egrep "[0-9]{1,}" -o)+2]
+
+  sed -i "s/.*worker_processes.*/worker_processes $workers/g" /etc/badger/core/files/god/unicorn-stg.rb
+  sed -i "s/.*worker_processes.*/worker_processes $workers/g" /etc/badger/core/files/god/unicorn.rb
+
+  sed -i "s/.*num_of_workers =.*/num_of_workers = $workers/g" /etc/badger/core/files/god/angel/resque-stg.god
+  sed -i "s/.*num_of_workers =.*/num_of_workers = $workers/g" /etc/badger/core/files/god/angel/resque.god
+
+  Sync /etc/badger/core/files/god/god /etc/init.d/god 744
+  Service god
+}

@@ -1,0 +1,19 @@
+yum_readline() {
+  YumExists readline && return 0
+  yum -y install readline
+}
+
+yum_readline-devel() {
+  YumExists readline-devel && return 0
+  yum -y install readline-devel
+}
+
+apt_libreadline6() {
+  AptExists libreadline6 && return 0
+  apt-get -y install libreadline6
+}
+
+apt_libreadline6-dev() {
+  AptExists libreadline6-dev && return 0
+  apt-get -y install libreadline6-dev
+}

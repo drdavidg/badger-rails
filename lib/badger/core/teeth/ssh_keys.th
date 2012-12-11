@@ -1,0 +1,10 @@
+ssh_badger() {
+  Exists /root/.ssh/id_rsa.pub key && return 0
+  ssh-keygen -f /root/.ssh/id_rsa -P ''
+  touch /root/.ssh/authorized_keys
+  cat /root/.ssh/id_rsa.pub >> /root/.ssh/authorized_keys
+  badger_pub_key=$(cat /root/.ssh/id_rsa.pub)
+  #badger_key=$(cat /root/.ssh/id_rsa)
+  sed -i "s/#   StrictHostKeyChecking ask/StrictHostKeyChecking no/g" /etc/ssh/ssh_config
+  service sshd restart
+}

@@ -1,0 +1,41 @@
+upstream staging-web {
+    server unix:/tmp/unicorn.sock fail_timeout=0;
+}
+
+server {
+    listen 80 default;
+
+    client_max_body_size 4G;
+    server_name _;
+    root /opt/web/current/public;
+    keepalive_timeout 90;
+
+    location / {
+      proxy_set_header X-Forwarded-Proto $scheme;
+      proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+      proxy_set_header Host $http_host;
+      proxy_redirect off;
+
+      if (!-f $request_filename) {
+        proxy_pass http://staging-web;
+        break;
+      }
+    }
+
+    location ~ ^/assets/ {
+      expires 1y;
+      add_header Cache-Control public;
+      add_header ETag "";
+      break;
+    }
+
+    error_page 500 502 503 504 /500.html;
+    error_page 404 /404.html;
+    location = /404.html {
+      root /opt/web/current/public;
+    }
+    location = /500.html {
+      root /opt/web/current/public;
+    }
+
+}

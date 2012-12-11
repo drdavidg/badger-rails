@@ -1,0 +1,18 @@
+
+staging:
+  host: localhost
+  username: badger
+  password: example
+  database: badger-staging
+  adapter: mysql2
+  reconnect: true
+  pool: 100
+
+production:
+  host: localhost
+  username: badger
+  password: example
+  database: badger-production
+  adapter: mysql2
+  reconnect: true
+  pool: 100

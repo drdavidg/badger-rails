@@ -1,0 +1,9 @@
+install_libogg() {
+  YumExists libogg && return 0
+  yum install -y libogg
+}
+
+install_libogg-devel() {
+  YumExists libogg-devel && return 0
+  yum install -y libogg-devel
+}

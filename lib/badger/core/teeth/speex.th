@@ -1,0 +1,12 @@
+install_source_libspeex() {
+  Exists /usr/lib/libspeexdsp.so speex && return 0
+  cd /usr/local/src
+  wget -q $GFPath/speex-1.2rc1.tar.gz
+  tar -xzvf speex-1.2rc1.tar.gz
+  rm -rf speex-1.2rc1.tar.gz
+  cd speex-*
+  ./configure --prefix=/usr &&
+  make && make install &&
+  ln -sf /usr/local/lib/libspeexdsp.so.1.5.0 /usr/lib64/libspeexdsp.so.1 &&
+  ln -sf /usr/local/lib/libspeex.so.1 /usr/lib64/libspeex.so.1
+}

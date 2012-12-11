@@ -1,0 +1,9 @@
+yum_pwgen() {
+  Exists /usr/bin/pwgen && return 0
+  yum -y install pwgen
+}
+
+apt_pwgen() {
+  Exists /usr/bin/pwgen && return 0
+  apt-get -y install pwgen
+}

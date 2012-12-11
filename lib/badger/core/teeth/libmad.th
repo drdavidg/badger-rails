@@ -1,0 +1,11 @@
+install_source_libmad() {
+  Exists /usr/lib/libmad.so libmad && return 0
+  cd /usr/local/src
+  wget -q $GFPath/libmad-0.15.1b.tar.gz
+  tar -xzvf libmad-0.15.1b.tar.gz
+  rm -rf libmad-0.15.1b.tar.gz
+  cd libmad-*
+  sed -i '/-fforce-mem/d' configure &&
+  ./configure --prefix=/usr &&
+  make && make install
+}

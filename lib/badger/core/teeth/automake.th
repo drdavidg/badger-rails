@@ -1,0 +1,9 @@
+yum_automake() {
+  Exists /usr/bin/automake && return 0
+  yum -y install automake
+}
+
+apt_automake() {
+  Exists /usr/bin/automake && return 0
+  apt-get -y install automake
+}
