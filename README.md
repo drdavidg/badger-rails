@@ -36,12 +36,6 @@ Badger Rails deploys to a Cent Os server by Capistrano for ease of use and Bash 
 ###**Installation**
 * gem install badger-rails
 
-or
-
-* Pull down the repo.
-* In the project root directory run < gem build badger-rails.gemspec >
-* Then run < gem install badger-rails-(gem version).gem >
-
 ###**Usage**
 
 In your rails project run the command < badger generate yml > and fill out the config/badger.yml file that is generated.
