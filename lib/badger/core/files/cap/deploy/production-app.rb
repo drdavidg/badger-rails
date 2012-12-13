@@ -97,20 +97,20 @@ namespace :resque do
     else
       run "sudo /opt/rubygems/bin/god load /etc/badger/core/files/god/angel/resque.god"
     end
-    if test_file("#{relase_path}/config/god/resque_scheduler.god")
-      run "sudo /opt/rubygems/bin/god load #{relase_path}/config/god/resque_scheduler.god"
+    if test_file("#{release_path}/config/god/resque_scheduler.god")
+      run "sudo /opt/rubygems/bin/god load #{release_path}/config/god/resque_scheduler.god"
     end
-    if test_file("#{relase_path}/config/god/apn_sender.god")
-      run "sudo /opt/rubygems/bin/god load #{relase_path}/config/god/apn_sender.god"
+    if test_file("#{release_path}/config/god/apn_sender.god")
+      run "sudo /opt/rubygems/bin/god load #{release_path}/config/god/apn_sender.god"
     end
   end
 
   task :restart, :roles => :app do
     run "sudo /opt/rubygems/bin/god restart resque"
-    if test_file("#{relase_path}/config/god/resque_scheduler.god")
+    if test_file("#{release_path}/config/god/resque_scheduler.god")
       run "sudo /opt/rubygems/bin/god restart scheduler"
     end
-    if test_file("#{relase_path}/config/god/apn_sender.god")
+    if test_file("#{release_path}/config/god/apn_sender.god")
       run "sudo /opt/rubygems/bin/god restart apn_sender"
     end
   end
