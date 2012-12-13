@@ -31,6 +31,7 @@ Badger Rails deploys to a Cent Os server by Capistrano for ease of use and Bash 
 * Rails 3+ Project that works :)
 * gem 'mysql2' in Gemfile
 * gem 'unicorn' in Gemfile
+* gem 'therubyracer' in Gemfile. This may require the gem libv8.
 * CentOS 6+ server Red Hat 6+ server or Ubuntu 10.04, 11.04, 11.10
 
 ###**Installation**
