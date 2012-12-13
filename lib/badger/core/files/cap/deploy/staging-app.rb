@@ -5,6 +5,10 @@ require 'yaml'
 require 'bundler/capistrano'
 require './lib/badger_plugin.rb' if File.exists?("lib/badger_plugin.rb")
 
+def test_file(full_path)
+  'true' == capture("if [ -f #{full_path} ]; then echo 'true'; fi").strip
+end
+
 `git pull origin master`
 YAML::ENGINE.yamler = 'syck'
 yml = YAML.load_file "/opt/tmp/web/config/badger.yml"
@@ -93,10 +97,23 @@ namespace :resque do
     else
       run "sudo /opt/rubygems/bin/god load /etc/badger/core/files/god/angel/resque-stg.god"
     end
+    if test_file("#{relase_path}/config/god/resque_scheduler-stg.god")
+      run "sudo /opt/rubygems/bin/god load #{relase_path}/config/god/resque_scheduler-stg.god"
+    end
+    if test_file("#{relase_path}/config/god/apn_sender-stg.god")
+      run "sudo /opt/rubygems/bin/god load #{relase_path}/config/god/apn_sender-stg.god"
+    end
+
   end
 
   task :restart, :roles => :app do
     run "sudo /opt/rubygems/bin/god restart resque"
+    if test_file("#{relase_path}/config/god/resque_scheduler-stg.god")
+      run "sudo /opt/rubygems/bin/god restart scheduler"
+    end
+    if test_file("#{relase_path}/config/god/apn_sender-stg.god")
+      run "sudo /opt/rubygems/bin/god restart apn_sender"
+    end
   end
 end
 
