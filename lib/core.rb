@@ -295,8 +295,8 @@ EOF
     else
       `sed 's/.*install_media_group.*/#install_media_group/g' #{command}`
     end
-    `echo #{@yml['password']} > #{@badger_root}badger/core/files/ssh/app;
-    echo #{@yml['domain']} >> #{@badger_root}badger/core/files/ssh/app;
+    `echo '#{@yml['password']}' > #{@badger_root}badger/core/files/ssh/app;
+    echo '#{@yml['domain']}' >> #{@badger_root}badger/core/files/ssh/app;
     cap #{app} app_setup;
     cap #{app} app_sync;
     cap #{app} app_deploy`
