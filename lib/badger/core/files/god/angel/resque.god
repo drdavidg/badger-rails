@@ -10,7 +10,7 @@ num_of_workers.times do |num|
     w.group = 'resque'
     w.interval = 30.seconds # default
     w.env = { 'PATH' => path, 'GEM_HOME' => '/opt/rubygems', 'RAILS_ENV' => rails_env, 'QUEUE' => 'default', 'VERBOSE' => 'true' }
-    w.pid_file "#{SHARED_DIR}/pids/unicorn.pid"
+    w.pid_file "#{shared_dir}/pids/unicorn.pid"
     w.start = "/opt/rubygems/bin/rake -f #{rails_root}/Rakefile -I #{rails_root} resque:work"
     w.log = "#{shared_dir}/log/god_resque_#{num}.log"
 
