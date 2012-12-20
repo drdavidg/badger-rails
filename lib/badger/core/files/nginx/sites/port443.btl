@@ -1,7 +1,7 @@
 cat >> /etc/badger/core/files/nginx/sites/production-web << EOF
 
 server {
-    listen  443;
+    listen  ${ip}:443;
     ssl    on;
     ssl_certificate    /etc/ssl/${domain}.crt;
     ssl_certificate_key    /etc/ssl/${domain}.key;

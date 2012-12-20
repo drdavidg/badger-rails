@@ -26,26 +26,36 @@ config_nginx() {
 }
 
 nginx_add_site() {
-  if [ ! -z `cat /opt/tmp/web/config/badger.yml | grep certification: | grep true` ]
+  if [ ! -z `cat /opt/tmp/web/config/badger.yml | grep certs:` ]
   then
     if [ $1 == 'production-web' ]
     then
-      [ "$(ls -A /opt/tmp/web/config/certs)" ] && echo "ssl" || return 0
-      cd /opt/web/current/config/certs/
+      echo '============Production==========='
+      Ruby="yml = YAML::load_file('/opt/web/current/config/badger.yml'); puts yml['certs'].keys;" &&
+      keys=$(ruby -ryaml -e "$Ruby") &&
+      declare -a certs=($keys) &&
+      for c in "${certs[@]}"
+      do
+        ruby_key="yml = YAML::load_file('/opt/web/current/config/badger.yml'); puts yml['certs']['$c'];"
+        certification=$c
+        ip=$(ruby -ryaml -e "$ruby_key") || break
+        location=/etc/badger/core/files/nginx/sites
+        if [ $certification == "base" ]
+        then
+          domain=$ip
+          Template $location/port80.btl
+        else
+          domain=$(echo $certification | sed "s/.crt//g")
+          Template $location/port443.btl
 
-      cert=$( ls | grep .crt )
-      domain=${cert//.crt/}
-      key=$( ls | grep .key )
-      signing=$( ls | grep .csr )
-
-      location=/etc/badger/core/files/nginx/sites
-
-      Template $location/port80.btl
-      Template $location/port443.btl
-
-      Sync /opt/web/current/config/certs/$cert /etc/ssl/$cert
-      Sync /opt/web/current/config/certs/$key /etc/ssl/$key
-      Sync /opt/web/current/config/certs/$signing /etc/ssl/$signing
+          Exists /opt/web/current/config/certs/$domain.crt &&
+          Sync /opt/web/current/config/certs/$domain.crt /etc/ssl/$domain.crt
+          Exists /opt/web/current/config/certs/$domain.key &&
+          Sync /opt/web/current/config/certs/$domain.key /etc/ssl/$domain.key
+          Exists /opt/web/current/config/certs/$domain.csr &&
+          Sync /opt/web/current/config/certs/$domain.csr /etc/ssl/$domain.csr
+        fi
+      done
     fi
   fi
 
