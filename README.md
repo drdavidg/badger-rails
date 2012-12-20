@@ -3,6 +3,8 @@
 Allows for deployment of Rails 3 project to a CentOS 6+ Red Hat 6+ or Ubuntu Server running Mysql and Nginx.<br>
 Badger Rails deploys to a Cent Os server by Capistrano for ease of use and Bash for speed. Some of the packages it will build are listed below.
 
+**[Watch our Screencast on youtube](http://www.youtube.com/watch?feature=player_embedded&v=ki0CL3D-Llk)**
+
 * automake
 * bison
 * capistrano-ext
