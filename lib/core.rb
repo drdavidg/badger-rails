@@ -23,7 +23,7 @@ module Methods
   end
 
   def database_server(app_claw)
-    command = "#{app_claw}db-app.claw > #{app_claw}app.tmp; mv #{app_claw}app.tmp #{app_claw}db-app.claw"
+    command = "#{app_claw}db-app.claw > #{app_claw}app.tmp; mv -f #{app_claw}app.tmp #{app_claw}db-app.claw"
     case @yml['db']['redis']
     when true
       `sed 's/.*install_source_redis.*/install_source_redis/g' #{command}`
@@ -180,7 +180,7 @@ EOF
   end
 
   def rails_server(app_claw)
-    command = "#{app_claw}rails-app.claw > #{app_claw}app.tmp; mv #{app_claw}app.tmp #{app_claw}rails-app.claw"
+    command = "#{app_claw}rails-app.claw > #{app_claw}app.tmp; mv -f #{app_claw}app.tmp #{app_claw}rails-app.claw"
     case @yml['redis']
     when true
       `sed 's/.*install_source_redis.*/install_source_redis/g' #{command}`
@@ -194,6 +194,14 @@ EOF
       `sed 's/.*config_capistrano.*/config_capistrano production/g' #{command}`
     elsif @yml['environment'] == "staging"
       `sed 's/.*config_capistrano.*/config_capistrano staging/g' #{command}`
+    else
+      @errors.errors('environment')
+      exit
+    end
+    if @yml['environment'] == "production"
+      `sed 's/.*nginx_add_site.*/nginx_add_site production-web/g' #{command}`
+    elsif @yml['environment'] == "staging"
+      `sed 's/.*nginx_add_site.*/nginx_add_site staging-web/g' #{command}`
     else
       @errors.errors('environment')
       exit
@@ -232,7 +240,7 @@ EOF
     Dir.chdir(@badger_root + "badger/")
     app_claw = @badger_root + "badger/core/claws/"
     ensure_ssh
-    command = "#{app_claw}rails-app.claw > #{app_claw}app.tmp; mv #{app_claw}app.tmp #{app_claw}rails-app.claw"
+    command = "#{app_claw}rails-app.claw > #{app_claw}app.tmp; mv -f #{app_claw}app.tmp #{app_claw}rails-app.claw"
     case @yml['redis']
     when true
       `sed 's/.*install_source_redis.*/install_source_redis/g' #{command}`
@@ -250,6 +258,14 @@ EOF
       @errors.errors('environment')
       exit
     end
+    if @yml['environment'] == "production"
+      `sed 's/.*nginx_add_site.*/nginx_add_site production-web/g' #{command}`
+    elsif @yml['environment'] == "staging"
+      `sed 's/.*nginx_add_site.*/nginx_add_site staging-web/g' #{command}`
+    else
+      @errors.errors('environment')
+      exit
+    end
     exists = `cap #{ARGV[1]} exists`
     update_error if not exists.chomp == "true"
     `cap #{ARGV[1]} sync`
@@ -261,11 +277,19 @@ EOF
   end
 
   def worker_server(app_claw, app)
-    command = "#{app_claw}app.claw > #{app_claw}app.tmp; mv #{app_claw}app.tmp #{app_claw}app.claw"
+    command = "#{app_claw}app.claw > #{app_claw}app.tmp; mv -f #{app_claw}app.tmp #{app_claw}app.claw"
     if @yml['environment'] == "production"
       `sed 's/.*config_capistrano.*/config_capistrano production-app #{app}/g' #{command}`
     elsif @yml['environment'] == "staging"
       `sed 's/.*config_capistrano.*/config_capistrano staging-app #{app}/g' #{command}`
+    else
+      @errors.errors('environment')
+      exit
+    end
+    if @yml['environment'] == "production"
+      `sed 's/.*nginx_add_site.*/nginx_add_site production-web/g' #{command}`
+    elsif @yml['environment'] == "staging"
+      `sed 's/.*nginx_add_site.*/nginx_add_site staging-web/g' #{command}`
     else
       @errors.errors('environment')
       exit
