@@ -1,5 +1,4 @@
 load "deploy"
-load "deploy/assets"
 require 'rubygems'
 require 'yaml'
 require 'bundler/capistrano'
