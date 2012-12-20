@@ -2,3 +2,4 @@ pkg
 doc
 .rvmrc
 .DS_Store
+badger-rails.gemspec
