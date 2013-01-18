@@ -2,11 +2,11 @@
 
 Gem::Specification.new do |s|
   s.name = "badger-rails"
-  s.version = "1.0.3"
+  s.version = "1.0.4"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 1.2") if s.respond_to? :required_rubygems_version=
   s.authors = ["Nathan Kelley"]
-  s.date = "2012-12-20"
+  s.date = "2013-01-18"
   s.description = "Badger-Rails makes use of Capistrano and Badger to create a configuration for easy deployment to a remote server.\nBadger-Rails deploys to CentOs 6+ automatically building nginx, mysql, and of course ruby."
   s.email = "nathan@curiousminds.com"
   s.executables = ["badger"]

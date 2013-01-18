@@ -2,7 +2,7 @@ require 'rubygems'
 require 'rake'
 require 'echoe'
 
-Echoe.new('badger-rails', '1.0.3') do |p|
+Echoe.new('badger-rails', '1.0.4') do |p|
   p.description    = "Badger-Rails makes use of Capistrano and Badger to create a configuration for easy deployment to a remote server.\nBadger-Rails deploys to CentOs 6+ automatically building nginx, mysql, and of course ruby."
   p.summary        = "Configuration for using Badger with Rails deployment."
   p.url            = "http://curiousminds.github.com/badger-rails"
