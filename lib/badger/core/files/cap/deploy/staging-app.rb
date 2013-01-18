@@ -120,7 +120,7 @@ namespace :deploy do
   task :restart, :roles => :app, :except => { :no_release => true } do
     resque.prepare_resque
     resque.load_config
-    #resque.restart
+    resque.restart
   end
 
   [:start, :stop].each do |t|
